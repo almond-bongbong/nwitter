@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { initializeApp } from 'firebase/app';
-import App from './App';
+import 'firebase/auth';
+import App from './components/App';
 import { firebaseConfig } from './config/firebase';
 
 initializeApp(firebaseConfig);
