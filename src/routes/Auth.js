@@ -35,11 +35,11 @@ function Auth() {
           value={password}
           onChange={onChange}
         />
-        <input type="submit" value="Log In" />
+        <button type="submit" value="Log In" />
       </form>
       <div>
-        <button>Continue with Google</button>
-        <button>Continue with Github</button>
+        <button type="button">Continue with Google</button>
+        <button type="button">Continue with Github</button>
       </div>
     </div>
   );
