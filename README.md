@@ -1,3 +1,3 @@
 # nwitter
 
-## Twitter clone project with firebase
+> Twitter clone project with firebase
