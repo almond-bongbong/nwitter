@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import firebase from 'firebase/app';
 import Router from './Router';
 
 function App() {
-  const [isLoggedIn] = useState(firebase.auth().currentUser);
+  const [init, setInit] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
 
-  return <Router isLogged={isLoggedIn} />;
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user);
+      setInit(true);
+    });
+  }, []);
+
+  console.log(init, isLoggedIn);
+
+  return init ? <Router isLoggedIn={isLoggedIn} /> : 'Initializing...';
 }
 
 export default App;
