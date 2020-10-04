@@ -8,6 +8,7 @@ function Nweet({ id, text, image, isOwner }) {
 
   const onDeleteClick = async () => {
     if (window.confirm('Are you sure you want to delete this nweet?')) {
+      if (image) await firebase.storage().refFromURL(image).delete();
       await firebase.firestore().doc(`${NWEETS_COLLECTION}/${id}`).delete();
     }
   };
