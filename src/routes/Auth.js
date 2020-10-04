@@ -43,6 +43,21 @@ function Auth() {
     }
   };
 
+  const onSocialClick = async (e) => {
+    const { name } = e.target;
+    let provider;
+
+    if (name === 'google') {
+      provider = new firebase.auth.GoogleAuthProvider();
+    }
+    if (name === 'github') {
+      provider = new firebase.auth.GithubAuthProvider();
+    }
+
+    const result = await firebase.auth().signInWithPopup(provider);
+    console.log(result);
+  };
+
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -73,8 +88,12 @@ function Auth() {
         </button>
       </div>
       <div>
-        <button type="button">Continue with Google</button>
-        <button type="button">Continue with Github</button>
+        <button type="button" name="google" onClick={onSocialClick}>
+          Continue with Google
+        </button>
+        <button type="button" name="github" onClick={onSocialClick}>
+          Continue with Github
+        </button>
       </div>
     </div>
   );
