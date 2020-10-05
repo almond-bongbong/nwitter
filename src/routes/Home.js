@@ -1,19 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NWEETS_COLLECTION } from '../constants/firestore';
 import firebase from 'firebase/app';
-import { v4 as uuidv4 } from 'uuid';
 import Nweet from '../components/Nweet';
+import NweetFactory from '../components/NweetFactory';
+import { useCurrentUser } from '../contexts/CurrentUserContext';
 
-function Home({ currentUser }) {
-  const [nweet, setNweet] = useState('');
+function Home() {
+  const { currentUser } = useCurrentUser();
   const [nweets, setNweets] = useState([]);
-  const imageRef = useRef();
-  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     firebase
       .firestore()
       .collection(NWEETS_COLLECTION)
+      .orderBy('createdAt', 'desc')
       .onSnapshot((snapshot) => {
         const data = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -23,91 +23,21 @@ function Home({ currentUser }) {
       });
   }, []);
 
-  const clearImage = () => {
-    imageRef.current.value = null;
-    setPreviewImage(null);
-  };
-
-  const onSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!nweet) return;
-    const file = imageRef.current.files[0];
-    let fileUrl;
-
-    if (file) {
-      const uploadResult = await firebase
-        .storage()
-        .ref()
-        .child(`${currentUser.uid}/${uuidv4()}`)
-        .put(file);
-
-      fileUrl = await uploadResult.ref.getDownloadURL();
-    }
-    await firebase.firestore().collection(NWEETS_COLLECTION).add({
-      text: nweet,
-      image: fileUrl,
-      createdAt: Date.now(),
-      createdBy: currentUser.uid,
-    });
-    setNweet('');
-    clearImage();
-  };
-
-  const onChange = (e) => {
-    setNweet(e.target.value);
-  };
-
-  const onChangeImage = (e) => {
-    const file = e.target.files?.[0] || null;
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = (finish) => {
-        setPreviewImage(finish.currentTarget.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input
-          value={nweet}
-          onChange={onChange}
-          type="text"
-          placeholder="What's on your mind?"
-          maxLength={120}
-        />
-        <input
-          type="file"
-          ref={imageRef}
-          accept="image/*"
-          onChange={onChangeImage}
-        />
-        {previewImage && (
-          <div>
-            <img src={previewImage} alt="" style={{ width: 50, height: 50 }} />
-            <button type="button" onClick={clearImage}>
-              Clear
-            </button>
-          </div>
-        )}
-        <input type="submit" value="Nweet" />
-      </form>
+    <div className="container">
+      <NweetFactory />
 
-      <ul>
+      <div style={{ marginTop: 30 }}>
         {nweets.map((n) => (
           <Nweet
             key={n.id}
             id={n.id}
             text={n.text}
             image={n.image}
-            isOwner={currentUser?.uid === n.createdBy}
+            isOwner={currentUser?.id === n.createdBy}
           />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

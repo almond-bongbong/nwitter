@@ -9,11 +9,15 @@ function App() {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      setCurrentUser({
-        id: user.uid,
-        name: user.displayName,
-        photo: user.photoURL,
-      });
+      if (user) {
+        setCurrentUser({
+          id: user.uid,
+          name: user.displayName,
+          photo: user.photoURL,
+        });
+      } else {
+        setCurrentUser(null);
+      }
       setInit(true);
     });
   }, [setCurrentUser]);
