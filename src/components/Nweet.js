@@ -46,7 +46,7 @@ function Nweet({ id, text, image, isOwner }) {
               onChange={handleNewText}
               className="formInput"
             />
-            <button className="formBtn">Update Nweet</button>
+            <input type="submit" className="formBtn" value="Update Nweet" />
           </form>
           <span onClick={toggleEditMode} className="formBtn cancelBtn">
             Cancel
